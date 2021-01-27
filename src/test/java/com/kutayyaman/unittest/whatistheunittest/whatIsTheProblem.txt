@@ -1,0 +1,10 @@
+                FIZZ BUZZ
+1'den 100'e kadar sayıları alan ve eğer aldığı sayı
+
+    1. 3'e bölünüyorsa String olarak "Fizz",
+    2. 5'e bölünüyorsa String olarak "Buzz",
+    3. Hem 3'e hem de 5'e bölünüyorsa "FizzBuzz",
+    4. Hem 3'e hem de 5'e bölünmüyorsa sayının kendisini,
+    5. 1'den küçük veya 100'den büyük bir sayı geldiğinde de IllegalArgumentException
+
+dönen bir program yazalım.
