@@ -122,7 +122,7 @@ public class StudentTest {
         LecturerCourseRecord lecturerCourseRecord = new LecturerCourseRecord(null, null);
         assertTimeout(Duration.ofMillis(10), () -> student.addCourse(lecturerCourseRecord));
 
-        assertTimeoutPreemptively(Duration.ofMillis(10), () -> student.addCourse(lecturerCourseRecord));
+        assertTimeoutPreemptively(Duration.ofMillis(10), () -> student.addCourse(lecturerCourseRecord)); // AssertTimeoutPreemptively ile assertTimeout arasindaki fark Preemptively olan eger soldaki verilen ms degerinin uzerine cikilirsa sagdaki islemin bitmesini beklemedne iptal ediyor ama digeri ise sagdaki islem bitene kadar bekliyor ve soldaki verilen ms degerini ne kadar ms aştığını soyluyor.
     }
 
 }
