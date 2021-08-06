@@ -1,10 +1,8 @@
 package com.kutayyaman.unittest.courserecord;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Tag;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
+import java.time.Duration;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*; //static import bu dikkat
@@ -85,4 +83,46 @@ public class StudentTest {
                     assertNotSame(student3, student4);
                 });
     }
+
+    @Test
+    @DisplayName("Got an exception when add a null lecturer course record to student")
+    @Tags({@Tag("exceptional"), @Tag("addCourse")})
+    void throwsExceptionWhenAddToNullCourseToStudent() {
+
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertThrows(IllegalArgumentException.class, () -> ahmet.addCourse(null)); // yani eger null bir kayit eklenirse IlleagelArgumentException firlatmasi beklenir diyor ama sagda yapilan islem soldaki hatayi firlatmiyosa test hata verir.
+        assertThrows(IllegalArgumentException.class, () -> ahmet.addCourse(null), "Throws IllegalArgumentException");
+        final IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () -> ahmet.addCourse(null));
+        assertEquals("Can't add course with null lecturer course record", illegalArgumentException.getMessage());
+    }
+
+    @Test
+    @DisplayName("Add course to a student less than 10ms")
+    @Tag("addCourse")
+    void addCourseToStudentWithATimeConstraint() {
+        /**
+         * timeoutNotExceeded
+         * timeoutNotExceededWithResult
+         * timeoutNotExceededWithMethod
+         * timeoutExceeded
+         * timeoutExceededWithPreemptiveTermination
+         */
+
+        assertTimeout(Duration.ofMillis(10), () -> {
+            //nothing will be done and this code run under 10ms
+        });
+
+        final String result = assertTimeout(Duration.ofMillis(10), () -> {
+            //return a string and this code run under 10ms
+            return "some string result";
+        });
+        assertEquals("some string result", result);
+
+        final Student student = new Student("1", "Ahmet", "Can");
+        LecturerCourseRecord lecturerCourseRecord = new LecturerCourseRecord(null, null);
+        assertTimeout(Duration.ofMillis(10), () -> student.addCourse(lecturerCourseRecord));
+
+        assertTimeoutPreemptively(Duration.ofMillis(10), () -> student.addCourse(lecturerCourseRecord));
+    }
+
 }
