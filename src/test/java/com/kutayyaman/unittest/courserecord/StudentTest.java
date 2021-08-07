@@ -6,6 +6,8 @@ import java.time.Duration;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*; //static import bu dikkat
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 public class StudentTest {
 
@@ -123,6 +125,43 @@ public class StudentTest {
         assertTimeout(Duration.ofMillis(10), () -> student.addCourse(lecturerCourseRecord));
 
         assertTimeoutPreemptively(Duration.ofMillis(10), () -> student.addCourse(lecturerCourseRecord)); // AssertTimeoutPreemptively ile assertTimeout arasindaki fark Preemptively olan eger soldaki verilen ms degerinin uzerine cikilirsa sagdaki islemin bitmesini beklemedne iptal ediyor ama digeri ise sagdaki islem bitene kadar bekliyor ve soldaki verilen ms degerini ne kadar ms aştığını soyluyor.
+    }
+
+    @Test
+    @DisplayName("Test student creation at only development machine")
+    @Tag("createStudent")
+    void shouldCreateStudentWithNameAndSurnameAtDevelopmentMachine() {
+
+        assumeTrue(System.getProperty("ENV") != null, "Aborting Test: System property ENV doesn't exist!"); // soldaki true donmuyosa sagdaki mesaji gosterir ve testi basarisiz olarak bitirir yani alt satirlara ilerlemez
+        assumeTrue(System.getProperty("ENV").equals("dev"), "Aborting Test: Not on a developer machine!");
+
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
+    }
+
+    @Test
+    @DisplayName("Test student creation at different environments")
+    @Tag("createStudent")
+    void shouldCreateStudentWithNameAndSurnameWithSpecificEnvironment() {
+
+        final Student ahmet = new Student("1", "Ahmet", "Can");
+
+        final String env = System.getProperty("ENV");
+        assumingThat(env != null && env.equals("dev"), () -> { // ilk parametresi false ise ikinci parametresi olan fonksiyonu calistirmaz ama false donse bile 159. satirdan bu testi calistirmaya devam eder yani assumeTrue gibi false donunce komple testi bitirmiyor.
+            LecturerCourseRecord lecturerCourseRecord = new LecturerCourseRecord(null, null);
+            ahmet.addCourse(lecturerCourseRecord);
+            assertEquals(1, ahmet.getStudentCourseRecords().size());
+        });
+
+        assertAll("Student Information",
+                () -> assertEquals("Ahmet", ahmet.getName()),
+                () -> assertEquals("Can", ahmet.getSurname()),
+                () -> assertEquals("1", ahmet.getId())
+        );
     }
 
 }
