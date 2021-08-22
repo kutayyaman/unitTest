@@ -8,6 +8,14 @@ public class Course {
     private int credit;
     private Department department;
 
+    public Course() {
+
+    }
+
+    public Course(String s) {
+        this.code=s;
+    }
+
     public enum CourseType {
         MANDATORY, //zorunlu
         ELECTIVE   //secmeli
