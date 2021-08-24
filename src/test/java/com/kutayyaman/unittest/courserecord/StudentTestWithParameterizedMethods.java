@@ -94,4 +94,62 @@ public class StudentTestWithParameterizedMethods {
             assertEquals(Course.CourseType.ELECTIVE, course.getCourseType());
         }
     }
+
+
+    @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+    @Nested
+    class MethodSourceDemo {
+        private int studentCourseSize = 0;
+
+        @BeforeAll
+        void setUp() {
+            student = new Student("id1", "Ahmet", "Yilmaz");
+        }
+
+        @ParameterizedTest
+        @MethodSource
+        void addCourseToStudent(String courseCode) {
+
+            final LecturerCourseRecord lecturerCourseRecord = new LecturerCourseRecord(new Course(courseCode), new Semester());
+            student.addCourse(lecturerCourseRecord);
+            studentCourseSize++;
+            assertEquals(studentCourseSize, student.getStudentCourseRecords().size());
+            assertTrue(student.isTakeCourse(new Course(courseCode)));
+        }
+
+        Stream<String> addCourseToStudent() { //bu methodun adi yukardaki methodun adiyla ayni olmali cunku @MethodSource derken orada bir isim belirtmedik ve yukardaki String courseCode olarak 101,103,105 sirasiyla gelcek yani 3kere caliscak yukardaki method
+            return Stream.of("101", "103", "105");
+        }
+
+        @ParameterizedTest
+        @MethodSource("courseWithCodeAndType")
+        void addCourseToStudent(String courseCode, Course.CourseType courseType) {
+
+            final Course course = new Course(courseCode);
+            course.setCourseType(courseType);
+            final LecturerCourseRecord lecturerCourseRecord = new LecturerCourseRecord(course, new Semester());
+            student.addCourse(lecturerCourseRecord);
+            studentCourseSize++;
+            assertEquals(studentCourseSize, student.getStudentCourseRecords().size());
+            assertTrue(student.isTakeCourse(new Course(courseCode)));
+            assumingThat(courseCode.equals("101"),
+                    () -> assertEquals(Course.CourseType.MANDATORY, courseType)
+            );
+            assumingThat(courseCode.equals("103"),
+                    () -> assertEquals(Course.CourseType.ELECTIVE, courseType)
+            );
+            assumingThat(courseCode.equals("105"),
+                    () -> assertEquals(Course.CourseType.MANDATORY, courseType)
+            );
+        }
+
+        Stream<Arguments> courseWithCodeAndType() { //bu methodun adi yukardaki methodda @MethodSource("courseWithCodeAndType") dedigimiz icin courseWithCodeAndType bu isimle olmali
+            return Stream.of(
+                    Arguments.of("101", Course.CourseType.MANDATORY),
+                    Arguments.of("103", Course.CourseType.ELECTIVE),
+                    Arguments.of("105", Course.CourseType.MANDATORY)
+            );
+        }
+
+    }
 }
