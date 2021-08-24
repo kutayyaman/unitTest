@@ -53,7 +53,7 @@ public class StudentTestWithParameterizedMethods {
 
         @ParameterizedTest
         @EnumSource(Course.CourseType.class)
-        void addCourseStudent(Course.CourseType courseType) {
+        void addCourseStudent(Course.CourseType courseType) { //butun courseTypelar icin caliscak
             final Course course = Course.newCourse()
                     .withCode(String.valueOf(new Random().nextInt(200)))
                     .withCourseType(courseType).course();
@@ -62,6 +62,36 @@ public class StudentTestWithParameterizedMethods {
             student.addCourse(lecturerCourseRecord);
             assertFalse(student.getStudentCourseRecords().isEmpty());
             assertTrue(student.isTakeCourse(course));
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Course.CourseType.class, names = "MANDATORY")
+            //sadeca MANDATORY icin caliscak
+        void addMandatoryCourseToStudent(Course.CourseType courseType) {
+            final Course course = Course.newCourse()
+                    .withCode(String.valueOf(new Random().nextInt(200)))
+                    .withCourseType(courseType).course();
+
+            final LecturerCourseRecord lecturerCourseRecord = new LecturerCourseRecord(course, new Semester());
+            student.addCourse(lecturerCourseRecord);
+            assertFalse(student.getStudentCourseRecords().isEmpty());
+            assertTrue(student.isTakeCourse(course));
+            assertEquals(Course.CourseType.MANDATORY, course.getCourseType());
+        }
+
+        @ParameterizedTest
+        @EnumSource(value = Course.CourseType.class, mode = EnumSource.Mode.EXCLUDE, names = "MANDATORY")
+            //MANDATORY olmayanlar icin calistircak
+        void addElectiveCourseToStudent(Course.CourseType courseType) {
+            final Course course = Course.newCourse()
+                    .withCode(String.valueOf(new Random().nextInt(200)))
+                    .withCourseType(courseType).course();
+
+            final LecturerCourseRecord lecturerCourseRecord = new LecturerCourseRecord(course, new Semester());
+            student.addCourse(lecturerCourseRecord);
+            assertFalse(student.getStudentCourseRecords().isEmpty());
+            assertTrue(student.isTakeCourse(course));
+            assertEquals(Course.CourseType.ELECTIVE, course.getCourseType());
         }
     }
 }
