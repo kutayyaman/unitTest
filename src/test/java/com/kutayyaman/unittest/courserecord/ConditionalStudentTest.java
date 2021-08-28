@@ -2,6 +2,8 @@ package com.kutayyaman.unittest.courserecord;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.test.context.junit.jupiter.DisabledIf;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
 
@@ -14,7 +16,12 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.condition.OS.MAC;
 
+//@ExtendWith(TestLoggerExtension.class)
 public class ConditionalStudentTest {
+
+    @RegisterExtension
+    static TestLoggerExtension testLoggerExtension = new TestLoggerExtension(); //yukardaki ExtendWith(TestLoggerExtension.class) yerine boylede yapabiliriz veya bunu iptal edip onu aktif edebiliriz ikiside ayni sey
+
     @EnabledOnOs({OS.MAC})
     @Test
     void shouldCreateStudentOnlyOnMac() {
