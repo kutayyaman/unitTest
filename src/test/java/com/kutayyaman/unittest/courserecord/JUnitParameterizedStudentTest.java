@@ -1,12 +1,15 @@
 package com.kutayyaman.unittest.courserecord;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@ExtendWith(CreateStudentConditionExtension.class)
+//bundan dolayi su an Add createStudent calisacak cunku DropCourseConditionExtension icinde create tag'ini kontrol eden bir yapi var.
 @DisplayName("Student Test with TestInfo and TestReporter Parameters")
 public class JUnitParameterizedStudentTest {
     private Student student;
