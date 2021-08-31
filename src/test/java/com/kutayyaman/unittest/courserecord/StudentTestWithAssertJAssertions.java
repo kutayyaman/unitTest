@@ -118,4 +118,64 @@ public class StudentTestWithAssertJAssertions {
         ;
 
     }
+
+    @Test
+    void anotherCreateStudentTest() {
+        final Department department = new Department();
+        final Student maral = new Student("id1", "Maral", "Yaman", LocalDate.of(2000, 8, 8));
+        maral.setDepartment(department);
+        final Student kutay = new Student("id2", "Kutay", "Yaman", LocalDate.of(1998, 6, 9));
+        kutay.setDepartment(department);
+
+        assertThat(maral).as("Check Student Maral Info")
+                .isNotNull()
+                .hasSameClassAs(kutay)
+                .isExactlyInstanceOf(Student.class)
+                .isInstanceOf(UniversityMember.class)
+                .isNotEqualTo(kutay)
+                .isEqualToComparingOnlyGivenFields(kutay, "surname")//maralla kutayin surname'lerinin esit olmasini bekliyor
+                .isEqualToIgnoringGivenFields(kutay, "id", "name", "birthDate")
+                .matches(student -> student.getBirthDate().getYear() == 2000)
+                .hasFieldOrProperty("name")
+                .hasNoNullFieldsOrProperties()
+                .extracting(Student::getName, Student::getSurname)
+                .contains("Maral", "Yaman");
+
+        StudentAssert.assertThat(maral).as("Student maral info check")
+                .hasName("Maral");
+
+    }
+
+    @Test
+    void addCourseToStudentWithExceptionalScenarios() {
+
+        final Student student = new Student("id1", "Maral", "Yurdakul");
+
+        assertThatThrownBy(() -> student.addCourse(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Can't add course")
+                .hasStackTraceContaining("Student");
+
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> student.addCourse(null))
+                .withMessageContaining("Can't add course")
+                .withNoCause();
+
+        assertThatIllegalArgumentException()
+                .isThrownBy(() -> student.addCourse(null))
+                .withMessageContaining("Can't add course")
+                .withNoCause();
+
+        assertThatCode(() -> student.addCourse(null))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Can't add course");
+
+        assertThatCode(() -> student.addCourse(new LecturerCourseRecord(new Course("101"), new Semester())))
+                .doesNotThrowAnyException();
+
+        final Throwable throwable = catchThrowable(() -> student.addCourse(null));
+        assertThat(throwable)
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Can't add course");
+    }
 }
