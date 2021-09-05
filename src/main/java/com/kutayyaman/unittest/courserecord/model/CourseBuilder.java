@@ -1,4 +1,4 @@
-package com.kutayyaman.unittest.courserecord;
+package com.kutayyaman.unittest.courserecord.model;
 
 public class CourseBuilder {
     private final Course course;

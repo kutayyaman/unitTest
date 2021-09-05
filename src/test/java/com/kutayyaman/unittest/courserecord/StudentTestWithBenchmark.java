@@ -1,5 +1,9 @@
 package com.kutayyaman.unittest.courserecord;
 
+import com.kutayyaman.unittest.courserecord.model.Course;
+import com.kutayyaman.unittest.courserecord.model.LecturerCourseRecord;
+import com.kutayyaman.unittest.courserecord.model.Semester;
+import com.kutayyaman.unittest.courserecord.model.Student;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.ExtensionContext;

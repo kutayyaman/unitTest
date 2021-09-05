@@ -1,4 +1,4 @@
-package com.kutayyaman.unittest.courserecord;
+package com.kutayyaman.unittest.courserecord.model;
 
 public enum Term {
     FALL(9), SPRING(2), SUMMER(6);

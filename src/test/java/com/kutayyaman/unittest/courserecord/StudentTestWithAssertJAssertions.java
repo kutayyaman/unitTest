@@ -1,11 +1,11 @@
 package com.kutayyaman.unittest.courserecord;
 
+import com.kutayyaman.unittest.courserecord.model.*;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import org.assertj.core.api.Condition;
 import org.assertj.core.data.Index;
-import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;

@@ -1,4 +1,4 @@
-package com.kutayyaman.unittest.courserecord;
+package com.kutayyaman.unittest.courserecord.model;
 
 import java.util.Collections;
 import java.util.HashSet;

@@ -1,5 +1,9 @@
 package com.kutayyaman.unittest.courserecord;
 
+import com.kutayyaman.unittest.courserecord.model.Course;
+import com.kutayyaman.unittest.courserecord.model.LecturerCourseRecord;
+import com.kutayyaman.unittest.courserecord.model.Semester;
+import com.kutayyaman.unittest.courserecord.model.Student;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DynamicNode;
 import org.junit.jupiter.api.TestFactory;
@@ -14,8 +18,6 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;
-
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.DynamicContainer.dynamicContainer;
 import static org.junit.jupiter.api.DynamicTest.dynamicTest;

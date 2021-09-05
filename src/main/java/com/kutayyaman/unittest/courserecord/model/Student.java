@@ -1,4 +1,6 @@
-package com.kutayyaman.unittest.courserecord;
+package com.kutayyaman.unittest.courserecord.model;
+
+import com.kutayyaman.unittest.courserecord.UniversityMember;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

@@ -1,5 +1,6 @@
 package com.kutayyaman.unittest.courserecord;
 
+import com.kutayyaman.unittest.courserecord.model.Student;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Tag;

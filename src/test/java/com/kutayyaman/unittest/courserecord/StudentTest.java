@@ -1,5 +1,7 @@
 package com.kutayyaman.unittest.courserecord;
 
+import com.kutayyaman.unittest.courserecord.model.LecturerCourseRecord;
+import com.kutayyaman.unittest.courserecord.model.Student;
 import org.junit.jupiter.api.*;
 
 import java.time.Duration;

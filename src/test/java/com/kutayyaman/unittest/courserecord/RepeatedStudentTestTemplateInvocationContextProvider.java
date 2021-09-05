@@ -1,5 +1,8 @@
 package com.kutayyaman.unittest.courserecord;
 
+import com.kutayyaman.unittest.courserecord.model.Course;
+import com.kutayyaman.unittest.courserecord.model.LecturerCourseRecord;
+import com.kutayyaman.unittest.courserecord.model.Semester;
 import org.junit.jupiter.api.extension.*;
 
 import java.util.Collections;

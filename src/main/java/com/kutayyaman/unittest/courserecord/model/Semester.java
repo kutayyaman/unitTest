@@ -1,4 +1,4 @@
-package com.kutayyaman.unittest.courserecord;
+package com.kutayyaman.unittest.courserecord.model;
 
 import java.time.LocalDate;
 
