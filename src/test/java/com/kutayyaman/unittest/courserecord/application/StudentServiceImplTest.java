@@ -280,6 +280,45 @@ public class StudentServiceImplTest {
 
     }
 
+    @Test
+    void addCourseWithBDD() { // BDD: Behavior Driven Development
+
+        final Course course = new Course("101");
+        final Semester semester = new Semester();
+        given(courseService.findCourse(any())).willReturn(Optional.of(course));
+        given(lecturer.lecturerCourseRecord(course, semester)).willReturn(new LecturerCourseRecord(course, semester));
+        given(lecturerService.findLecturer(course, semester)).willReturn(Optional.of(lecturer));
+        final Student studentAhmet = new Student("id1", "Ahmet", "Yilmaz");
+        given(studentRepository.findById(anyString()))
+                .willReturn(Optional.of(studentAhmet)).
+                willThrow(new IllegalArgumentException("Can't find a student"))
+                .willReturn(Optional.of(studentAhmet));
+
+        studentService.addCourse("id1", course, semester);
+
+        assertThatThrownBy(() -> studentService.findStudent("id1")).isInstanceOf(IllegalArgumentException.class);
+
+        final Optional<Student> studentOptional = studentService.findStudent("id1");
+
+        assertThat(studentOptional).as("Student")
+                .isPresent()
+                .get()
+                .matches(student -> student.isTakeCourse(course))
+        ;
+
+        then(courseService).should().findCourse(course);
+        then(courseService).should(times(1)).findCourse(course);
+        then(courseService).should(atLeast(1)).findCourse(course);
+        then(courseService).should(atMost(1)).findCourse(course);
+
+        then(studentRepository).should(times(3)).findById("id1");
+
+        then(lecturerService).should().findLecturer(any(Course.class), any(Semester.class));
+
+        then(lecturer).should().lecturerCourseRecord(argThat(argument -> argument.getCode().equals("101")), any(Semester.class));
+        then(lecturer).should().lecturerCourseRecord(argThat(new MyCourseArgumentMatcher()), any(Semester.class));
+    }
+
     class MyCourseArgumentMatcher implements ArgumentMatcher<Course> {
 
         @Override
