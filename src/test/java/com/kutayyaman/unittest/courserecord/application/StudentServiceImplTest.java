@@ -136,6 +136,29 @@ public class StudentServiceImplTest {
         verifyZeroInteractions(studentRepository, courseService, lecturerService, lecturer, student);
     }
 
+    @Test
+    void deleteStudent() {
+        final Student student = new Student("id1", "Kutay", "Yaman");
+        when(studentRepository.findById("id1")).thenAnswer(invocation -> Optional.of(student));
+
+        doNothing()//ilk cagirmada bir sey yapma
+                .doThrow(new IllegalArgumentException("There is no student in repo"))//ikincide exception firlat
+                .doAnswer(invocation -> {//3.de methodun icindekini yap
+                    final Student studentKutay = invocation.getArgument(0); //studentRepository'nin delete methodunun ilk parametresini aliyoruz oda zaten student'di ki tek parametre aliyordu zaten StudentServiceImpl'de gorebiliriz.
+                    System.out.println(String.format("Student<%s> will be deleted!", studentKutay));
+                    return null;
+                })
+                .when(studentRepository).delete(student); //studentRepository'nin delete'i void oldugu icin bu sekilde yapiliyor
+
+        studentService.deleteStudent("id1"); //ilk cagirilmasinda bir sey yapmicak
+        assertThatIllegalArgumentException().isThrownBy(() -> studentService.deleteStudent("id1"))
+                .withMessageContaining("no student");
+        studentService.deleteStudent("id1"); //bu 3. defa cagirildiginda yukardaki doAnswer icindeki method cagirilcak yani ogrenci bilgileri yazdirilacak
+        studentService.deleteStudent("id1"); //bu 4. defa cagirildiginda yine zaten 3 tane cagirilmaya gore yaptigimiz icin 3. cagirilmada ne oluyorsa o olcak yani ekrana yazcak yine.
+
+        verify(studentRepository,times(4)).findById("id1");
+        verify(studentRepository,times(4)).delete(student);
+    }
 
     class MyCourseArgumentMatcher implements ArgumentMatcher<Course> {
 
