@@ -122,7 +122,7 @@ public class StudentServiceImplTest {
 
         studentService.dropCourse("id1", course);
 
-        InOrder inOrder = inOrder(studentRepository, courseService, lecturerService, lecturer, student);
+        InOrder inOrder = inOrder(studentRepository, courseService, lecturerService, lecturer, student); // bunlarin calismasini sirayla kontrol ediyoruz
 
         inOrder.verify(studentRepository, times(2)).findById("id1");
         inOrder.verify(courseService, times(1)).findCourse(course);
@@ -138,8 +138,8 @@ public class StudentServiceImplTest {
         inOrder.verify(student).dropCourse(lecturerCourseRecord);
         inOrder.verify(studentRepository).save(student);
 
-        verifyNoMoreInteractions(studentRepository, courseService, lecturerService, lecturer, student);
-        verifyZeroInteractions(studentRepository, courseService, lecturerService, lecturer, student);
+        verifyNoMoreInteractions(studentRepository, courseService, lecturerService, lecturer, student); //bu parametre olarak verdigim mocklar ile alakali benim verify ettiklerim disinda bir seyler varsa bana hata donecek
+        verifyZeroInteractions(studentRepository, courseService, lecturerService, lecturer, student); //bu parametre olarak verdigim mocklar ile alakali benim verify ettiklerim disinda bir seyler varsa bana hata donecek
     }
 
     @Test
