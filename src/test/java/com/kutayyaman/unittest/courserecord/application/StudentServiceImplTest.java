@@ -30,6 +30,12 @@ public class StudentServiceImplTest {
     @InjectMocks
     private StudentServiceImpl studentService;
 
+    @Captor
+    private ArgumentCaptor<Student> studentArgumentCaptor;
+
+    @Captor
+    private ArgumentCaptor<String> stringArgumentCaptor;
+
     @BeforeEach
     void initMocks() {
         MockitoAnnotations.initMocks(this);
@@ -156,8 +162,17 @@ public class StudentServiceImplTest {
         studentService.deleteStudent("id1"); //bu 3. defa cagirildiginda yukardaki doAnswer icindeki method cagirilcak yani ogrenci bilgileri yazdirilacak
         studentService.deleteStudent("id1"); //bu 4. defa cagirildiginda yine zaten 3 tane cagirilmaya gore yaptigimiz icin 3. cagirilmada ne oluyorsa o olcak yani ekrana yazcak yine.
 
-        verify(studentRepository,times(4)).findById("id1");
-        verify(studentRepository,times(4)).delete(student);
+        verify(studentRepository, times(4)).findById(stringArgumentCaptor.capture());
+        verify(studentRepository, times(4)).delete(studentArgumentCaptor.capture());
+
+        assertThat(stringArgumentCaptor.getAllValues())
+                .hasSize(4)
+                .containsOnly("id1", "id1", "id1");
+
+        assertThat(studentArgumentCaptor.getAllValues())
+                .hasSize(4)
+                .extracting(Student::getId)
+                .containsOnly("id1", "id1", "id1");
     }
 
     class MyCourseArgumentMatcher implements ArgumentMatcher<Course> {
