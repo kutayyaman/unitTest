@@ -12,6 +12,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 
@@ -232,6 +234,51 @@ public class StudentServiceImplTest {
         verify(lecturer).lecturerCourseRecord(argThat(new MyCourseArgumentMatcher()), any(Semester.class));
     }
 
+    @Test
+    void addCourseWithPartialMock() {
+
+        final Course course = new Course("101");
+        final Semester semester = new Semester();
+        when(courseService.findCourse(any())).thenReturn(Optional.of(course));
+        when(lecturer.lecturerCourseRecord(course, semester)).thenReturn(new LecturerCourseRecord(course, semester));
+        when(lecturerService.findLecturer(course, semester)).thenReturn(Optional.of(lecturer));
+        final Student studentAhmet = mock(Student.class);
+        when(studentAhmet.isTakeCourse(any(Course.class))).thenReturn(true);
+        when(studentRepository.findById(anyString()))
+                .thenReturn(Optional.of(studentAhmet)).
+                thenThrow(new IllegalArgumentException("Can't find a student"))
+                .thenReturn(Optional.of(studentAhmet));
+
+        assertThat(studentAhmet.gpa()).isNull();
+        doCallRealMethod().when(studentAhmet).gpa();
+//        when().thenCallRealMethod();
+        assertThatNullPointerException().isThrownBy(studentAhmet::gpa);
+
+        studentService.addCourse("id1", course, semester);
+
+        assertThatThrownBy(() -> studentService.findStudent("id1")).isInstanceOf(IllegalArgumentException.class);
+
+        final Optional<Student> studentOptional = studentService.findStudent("id1");
+
+        assertThat(studentOptional).as("Student")
+                .isPresent()
+                .get()
+                .matches(student -> student.isTakeCourse(course))
+        ;
+
+        verify(courseService).findCourse(course);
+        verify(courseService, times(1)).findCourse(course);
+        verify(courseService, atLeast(1)).findCourse(course);
+        verify(courseService, atMost(1)).findCourse(course);
+
+        verify(studentRepository, times(3)).findById("id1");
+
+        verify(lecturerService).findLecturer(any(Course.class), any(Semester.class));
+
+        verify(lecturer).lecturerCourseRecord(argThat(argument -> argument.getCode().equals("101")), any(Semester.class));
+        verify(lecturer).lecturerCourseRecord(argThat(new MyCourseArgumentMatcher()), any(Semester.class));
+
+    }
 
     class MyCourseArgumentMatcher implements ArgumentMatcher<Course> {
 
