@@ -5,6 +5,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
@@ -174,6 +176,62 @@ public class StudentServiceImplTest {
                 .extracting(Student::getId)
                 .containsOnly("id1", "id1", "id1");
     }
+
+    @Test
+    void addCourseWithSpyStudent() {
+
+        final Course course = new Course("101");
+        final Semester semester = new Semester();
+        when(courseService.findCourse(any())).thenReturn(Optional.of(course));
+        when(lecturer.lecturerCourseRecord(course, semester)).thenReturn(new LecturerCourseRecord(course, semester));
+        when(lecturerService.findLecturer(course, semester)).thenReturn(Optional.of(lecturer));
+        final Student studentReal = new Student("id1", "Ahmet", "Yilmaz");
+        final Student studentAhmet = spy(studentReal);
+
+//        doThrow(new IllegalArgumentException("Spy failed!")).when(studentAhmet).addCourse(any(LecturerCourseRecord.class));
+
+        doReturn(BigDecimal.ONE).when(studentAhmet).gpa();
+
+        when(studentRepository.findById(anyString()))
+                .thenReturn(Optional.of(studentAhmet)).
+                thenThrow(new IllegalArgumentException("Can't find a student"))
+                .thenReturn(Optional.of(studentAhmet));
+
+        studentService.addCourse("id1", course, semester);
+
+        assertThat(studentAhmet)
+                .matches(student -> student.isTakeCourse(course));
+
+        assertThat(studentReal)
+                .matches(student -> student.isTakeCourse(course));
+
+        studentAhmet.setBirthDate(LocalDate.of(1990, 1, 1));
+        assertThat(studentAhmet.getBirthDate()).isNotNull();
+        assertThat(studentReal.getBirthDate()).isNull();
+
+        assertThatThrownBy(() -> studentService.findStudent("id1")).isInstanceOf(IllegalArgumentException.class);
+
+        final Optional<Student> studentOptional = studentService.findStudent("id1");
+
+        assertThat(studentOptional).as("Student")
+                .isPresent()
+                .get()
+                .matches(student -> student.isTakeCourse(course))
+        ;
+
+        verify(courseService).findCourse(course);
+        verify(courseService, times(1)).findCourse(course);
+        verify(courseService, atLeast(1)).findCourse(course);
+        verify(courseService, atMost(1)).findCourse(course);
+
+        verify(studentRepository, times(3)).findById("id1");
+
+        verify(lecturerService).findLecturer(any(Course.class), any(Semester.class));
+
+        verify(lecturer).lecturerCourseRecord(argThat(argument -> argument.getCode().equals("101")), any(Semester.class));
+        verify(lecturer).lecturerCourseRecord(argThat(new MyCourseArgumentMatcher()), any(Semester.class));
+    }
+
 
     class MyCourseArgumentMatcher implements ArgumentMatcher<Course> {
 
